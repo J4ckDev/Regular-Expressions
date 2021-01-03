@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example</title>
+  </head>
+  <body>
+    <p>Three of the top social networks are @Facebook, @Twitter and @Youtube.</p>
+    <script>
+      window.onload = () => {
+        const regex = /@[A-z]+/g;
+        const p = document.querySelector("p");
+        let paragraph = p.innerText;
+        const result = paragraph.match(regex);
+
+        result.forEach((value) => {
+          let temp = value.split("@")[1];
+          paragraph = paragraph.replace(value, `<a href="https://www.${temp}.com" target="_blank">${temp}</a>`);
+        });
+
+        p.innerHTML = paragraph;
+      };
+    </script>
+  </body>
+</html>
