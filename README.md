@@ -28,7 +28,8 @@ As you saw above, a pattern is a text between a pair of slashes, but you can def
 |Metacharacter|Description|
 |:--------:|-----------|
 |`[]`|When you need define a group or range of letters, symbols, and or numbers, write the characters of your interest between the brackets.|
-|`()`|Use this metacharacter to define different groups for a pattern separated by a vertical bar (`|`).|
+|`()`|Use this metacharacter to define groups and capture other data. You can add `?:` after the first parentheses to ignore the values obtained.|
+|`|`|Matches either what is before the `|` or after it.|
 |`\w`|Matches alphanumeric characters or with the underscore. An alternative form to see this metacharacter using brackets is `[A-z0-9_]`.|
 |`\d`|Matches a digit (equal to `[0-9]`). |
 |`^`|Matches the characters defined at the start of a string.|
@@ -94,18 +95,112 @@ To show you how to use and combine the different metacharacters and modifiers pr
     
     The regex obtained with all parts together is `/-?\b\d+(,\d+)*(\.\d+(e\d+)?|e\d+)?\b/g` and you can see [here](https://regex101.com/r/hfIXem/1) how works.
 
-   
-1. 
+2. Validate an IPv4 address. The addresses are four numbered separated by three dots and can only have a maximum value of 255 in either octet. You can find a list with correct and incorrect IP addresses below:
+    ```
+    Correct IP addresses
+    172.16.254.1
+    255.2.0.1
+    223.0.1.67
+    0.56.89.1
+    23.56.47.10
+    0.0.0.255
+    255.255.255.255
+    204.2.2.3
+    1.5.8.4
+
+    Incorrect IP addresses
+    192.168.0.256
+    256.56.78.78.45
+    500.54.54.85
+    500
+    255.23
+    256.0.1
+    3...3
+    192.168.000.1
+    00.2.5.4
+    000.5.6.7
+    ١٢٣.१२३.೧೨೩.๑๒๓
+    ```
+    Like in the first example, follow the next steps: 
+
+    1. Identify the problem context.
+    2. Separate the terms you need to match and analyze them.
+    3. Write the pattern from the analysis made previously. 
+    4. Last, build the regex with the needs previously defined.
+
+    As you see above, I don't explain the step by step of this example because I want to leave you a little work to understand why `/^(?:(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9]|)[0-9])(?:\.(?!$)|$)){4}$/gm` match perfectly with the requirement, but I leave you some clues of the regex below.
+
+    -  The lenght of each octet is from *1 to 3 numbers*.
+    -  The range of each octet is from *0 to 255*.
+    -  The list could see as a multiline text.
+    -  Use the metacharacter `?!` to match someting not following by something else. [Read this to know more](https://www.regular-expressions.info/lookaround.html).
+    
+    You can see the regex working [here](https://regex101.com/r/A0dvvZ/1/).
 
 ### Example with Javascript
+To illustrate how to define regular expressions in Javascript, I have created a little example where the social network name begins with `@` and in a match is replaced by a direct link. The paragraph and the javascript code are below:
+
+```html
+<p>Three of the top social networks are @Facebook, @Twitter and @Youtube.</p>
+```
+
+```javascript
+window.onload = () => {
+    const regex = /@[A-z]+/g;
+    const p = document.querySelector("p");
+    let paragraph = p.innerText;
+    const result = paragraph.match(regex);
+
+    result.forEach((value) => {
+        let temp = value.split("@")[1];
+        paragraph = paragraph.replace(value, `<a href="https://www.${temp}.com" target="_blank">${temp}</a>`);
+    });
+
+    p.innerHTML = paragraph;
+};
+```
+
+As you could observe, to match a regex only is necessary create a constant that saves the regex (`const regex = /@[A-z]+/g;`) and other constant to save all matches (`const result = paragraph.match(regex);`).
+
+You can find the file of this example [here](./examples/index.html).
+
 ### Example with PHP 
+The last example is to match all correct URLs and display them in the console. The paragraph used in this example is the following:
+
+>`https://www.blog.org` is an interesting blog, `https://google.com/` is the search engine more used, `//www.twiter.com` is a broken URL, `https://colombia.travel` is to get information about Colombia, `http://example.club` is an insecure website and, `HTTPS://EXAMPLE.COM` is an incorrect URL because it is in uppercase.
+
+The code generated to solve this example is:
+
+```php
+<?php
+$text = 'https://www.blog.org is an interesting blog,
+https://google.com/ is the search engine more used,
+//www.twiter.com is a broken URL, https://colombia.travel
+is to get information about Colombia, http://example.club
+is an insecure website and, HTTPS://EXAMPLE.COM is an incorrect
+URL because it is in uppercase.';
+
+preg_match_all(
+    "/\bhttps?:\/\/(?:www\.)?[a-z]+\.[a-z]{1,6}\b\/?/",
+    $text,
+    $result
+);
+foreach ($result[0] as $value) {
+    echo $value . "\n";
+}
+```
+
+In PHP, the modifier `g` is not necessary because the function used already search in all text; the rest of the regex has the things explained in this introduction to regular expressions.
+
+You can find the file of this example [here](./examples/regex.php).
 
 ## More to learn
-On the following websites, you can deepen more about regular expressions:
+Now your work is practicing and visiting the following websites to learn more about the regular expressions:
 
-1. [RegexOne - Learn regex with exercises](https://regexone.com/)
-2. [Meta characters in regular expresions](https://www.ibm.com/support/knowledgecenter/en/SSSH5A_9.0.1/com.ibm.rational.clearquest.schema.ec.doc/topics/sch_pkgs/r_emp_regexpmetachars.htm)
-3. [Javascript REgular Expresions](https://www.w3schools.com/js/js_regexp.asp)
-4. [Match method in Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match)
-5. [PCRE regex syntax - PHP](https://www.php.net/manual/en/reference.pcre.pattern.syntax.php)
-6. [PCRE Functions - PHP](https://www.php.net/manual/en/ref.pcre.php)
+1. [All about regular expresions](https://www.regular-expressions.info/)
+2. [RegexOne - Learn regex with exercises](https://regexone.com/)
+3. [Meta characters in regular expresions](https://www.ibm.com/support/knowledgecenter/en/SSSH5A_9.0.1/com.ibm.rational.clearquest.schema.ec.doc/topics/sch_pkgs/r_emp_regexpmetachars.htm)
+4. [Javascript Regular Expresions](https://www.w3schools.com/js/js_regexp.asp)
+5. [Match method in Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match)
+6. [PCRE regex syntax - PHP](https://www.php.net/manual/en/reference.pcre.pattern.syntax.php)
+7. [PCRE Functions - PHP](https://www.php.net/manual/en/ref.pcre.php)
