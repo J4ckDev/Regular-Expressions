@@ -29,7 +29,7 @@ As you saw above, a pattern is a text between a pair of slashes, but you can def
 |:--------:|-----------|
 |`[]`|When you need define a group or range of letters, symbols, and or numbers, write the characters of your interest between the brackets.|
 |`()`|Use this metacharacter to define groups and capture other data. You can add `?:` after the first parentheses to ignore the values obtained.|
-|`|`|Matches either what is before the `|` or after it.|
+|`\|`|Matches either what is before the `\|` or after it.|
 |`\w`|Matches alphanumeric characters or with the underscore. An alternative form to see this metacharacter using brackets is `[A-z0-9_]`.|
 |`\d`|Matches a digit (equal to `[0-9]`). |
 |`^`|Matches the characters defined at the start of a string.|
